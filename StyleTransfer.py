@@ -1,5 +1,6 @@
 import tensorflow as tf
 from keras.applications import vgg19, VGG19
+from keras import Model
 import IPython.display as display
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -48,6 +49,17 @@ def imshow(image, title=None):
     plt.imshow(image)
     if title:
         plt.title(title)
+
+def vgg_layers(layer_names):
+    """隠れ層の値のリストを返すVGGモデルを作る"""
+    # imagenetデータで学習されたVGGモデルをロード
+    vgg = VGG19(include_top=False, weights='imagenet')
+    vgg.trainable = False
+
+    outputs = [vgg.get_layer(name).output for name in layer_names]
+
+    model = Model([vgg.input], outputs)
+    return model
 
 
 content_path = tf.keras.utils.get_file('YellowLabradorLooking_new.jpg', 'https://storage.googleapis.com/download.tensorflow.org/example_images/YellowLabradorLooking_new.jpg')
