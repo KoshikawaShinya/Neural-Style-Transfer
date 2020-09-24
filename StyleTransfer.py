@@ -92,6 +92,7 @@ def train_step(image):
     with tf.GradientTape() as tape:
         outputs = extractor.call(image)
         loss = style_content_loss(outputs)
+        loss += total_variation_weight * tf.image.total_variation(image)
     
     grad = tape.gradient(loss, image)
     optimizer.apply_gradients([(grad, image)])
@@ -196,6 +197,9 @@ optimizer = tf.optimizers.Adam()
 # スタイルとコンテンツの重み
 style_weight = 1e-2
 content_weight = 1e4
+
+# 総変動損失の重み
+total_variation_weight=30
 
 for i in range(10):
     train_step(image)
